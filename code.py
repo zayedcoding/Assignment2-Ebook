@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime  # Import datetime to record order dates and times
 
 
 # === Ebook Management ===
@@ -6,12 +6,13 @@ class Item:
     """Base class for any store item, representing common attributes like title and price."""
 
     def __init__(self, title, price):
-        # Initializing title and price for an item
-        self.title = title
-        self.price = price
+        # Initialize the item with a title and price
+        self.title = title  # Title of the item (e.g., ebook title)
+        self.price = price  # Price of the item as a float
 
     def __str__(self):
-        # Returns a formatted string representation of the item
+        # Returns a string representation of the item
+        # Useful for displaying item details in a readable format
         return f"Title: '{self.title}', Price: ${self.price:.2f}"
 
 
@@ -19,61 +20,65 @@ class Ebook(Item):
     """Represents an Ebook, inheriting properties from Item and adding specific attributes."""
 
     def __init__(self, title, author, publication_date, genre, price, isbn, publisher, language):
-        # Initialize the base class (Item) attributes
+        # Call the parent class (Item) initializer to set title and price
         super().__init__(title, price)
-        # Additional ebook-specific attributes
-        self.author = author
-        self.publication_date = publication_date
-        self.genre = genre
-        self._isbn = isbn  # ISBN is a protected attribute
-        self.publisher = publisher
-        self.language = language
+        # Initialize additional attributes unique to an Ebook
+        self.author = author  # Author of the ebook
+        self.publication_date = publication_date  # Publication date as a string
+        self.genre = genre  # Genre or category of the ebook
+        self._isbn = isbn  # ISBN (protected), a unique identifier for the book
+        self.publisher = publisher  # Publisher of the ebook
+        self.language = language  # Language of the ebook content
 
     def __str__(self):
-        # Returns a detailed string representation of the Ebook
+        # Returns a comprehensive string representation of the Ebook,
+        # including author, publisher, language, and price
         return f"Title: '{self.title}', Author: {self.author}, Publisher: {self.publisher}, Language: {self.language}, Price: ${self.price:.2f}"
 
     def get_isbn(self):
-        # Accessor for the protected ISBN attribute
+        # Accessor (getter) for the protected ISBN attribute
+        # Allows other parts of the program to read the ISBN value safely
         return self._isbn
 
     def set_isbn(self, isbn):
-        # Mutator for the protected ISBN attribute, allowing it to be updated
+        # Mutator (setter) for the protected ISBN attribute
+        # Allows controlled modification of the ISBN value if needed
         self._isbn = isbn
 
 
 # === Customer Management ===
 class Customer:
-    """Represents a customer with personal and loyalty details."""
+    """Represents a customer with personal details and loyalty status."""
 
     def __init__(self, name, email, contact_number, address, payment_method, loyalty_member=False):
-        # Initializing customer details
-        self.name = name
-        self._email = email  # Email is protected to restrict direct access
-        self._contact_number = contact_number  # Contact number is protected
-        self.address = address
-        self.payment_method = payment_method
-        self.loyalty_member = loyalty_member  # Boolean to check if customer is a loyalty member
+        # Initialize customer details with essential information
+        self.name = name  # Customer's full name
+        self._email = email  # Email (protected for restricted access)
+        self._contact_number = contact_number  # Contact number (protected)
+        self.address = address  # Customer's physical address
+        self.payment_method = payment_method  # Payment method chosen by the customer
+        self.loyalty_member = loyalty_member  # Boolean indicating if the customer is a loyalty program member
 
     def __str__(self):
-        # Returns a formatted string with customer details
+        # Returns a formatted string containing customer details
+        # Displays loyalty status as "Yes" or "No" based on loyalty_member attribute
         return (f"Customer Name: {self.name}, Contact: {self._email}, Address: {self.address}, "
                 f"Payment Method: {self.payment_method}, Loyalty Member: {'Yes' if self.loyalty_member else 'No'}")
 
     def get_email(self):
-        # Accessor for protected email attribute
+        # Accessor for the protected email attribute
         return self._email
 
     def set_email(self, email):
-        # Mutator for protected email attribute
+        # Mutator to update the protected email attribute
         self._email = email
 
     def get_contact_number(self):
-        # Accessor for protected contact number attribute
+        # Accessor for the protected contact number attribute
         return self._contact_number
 
     def set_contact_number(self, contact_number):
-        # Mutator for protected contact number attribute
+        # Mutator to update the protected contact number attribute
         self._contact_number = contact_number
 
 
@@ -82,76 +87,94 @@ class ShoppingCart:
     """Manages the eBooks added to the cart and their quantities."""
 
     def __init__(self):
-        # Initializes an empty dictionary to store items and their quantities
-        self.items = {}
+        # Initialize an empty dictionary to store cart items and quantities
+        self.items = {}  # Dictionary where key=ebook instance, value=quantity
 
     def add_item(self, ebook, quantity=1):
-        # Adds an ebook to the cart or updates quantity if already present
+        # Adds an ebook to the cart, or increases quantity if already in cart
         if ebook in self.items:
-            self.items[ebook] += quantity  # Increase quantity for existing item
+            # If ebook is already in the cart, increase its quantity
+            self.items[ebook] += quantity
         else:
-            self.items[ebook] = quantity  # Add new item with specified quantity
-        print(f"Added {ebook.title} - Quantity: {quantity}")
+            # If ebook is not in the cart, add it with specified quantity
+            self.items[ebook] = quantity
+        print(f"Added {ebook.title} - Quantity: {quantity}")  # Confirmation message
 
     def remove_item(self, ebook, quantity=1):
-        # Removes specified quantity of an ebook from the cart
+        # Removes a specified quantity of an ebook from the cart
         if ebook in self.items:
-            self.items[ebook] -= quantity  # Decrease quantity
+            # If ebook is found in the cart, decrease its quantity
+            self.items[ebook] -= quantity
             if self.items[ebook] <= 0:
-                del self.items[ebook]  # Remove item if quantity is zero or less
-            print(f"Removed {quantity} of {ebook.title}")
+                # If quantity reaches zero or below, remove item completely
+                del self.items[ebook]
+            print(f"Removed {quantity} of {ebook.title}")  # Confirmation message
         else:
+            # If ebook is not in the cart, display a message
             print(f"{ebook.title} not in cart.")
 
     def __str__(self):
-        # Returns a string representation of all items and quantities in the cart
+        # Returns a formatted string listing all ebooks and their quantities in the cart
+        # Each line displays the ebook title and quantity in the cart
         return "\n".join(f"{ebook.title} - Quantity: {quantity}" for ebook, quantity in self.items.items())
 
 
 # === Discount Management ===
 class Discount:
-    """Manages discount policies, including loyalty and bulk discounts."""
+    """Handles application of discounts based on loyalty status or bulk purchases."""
 
     def __init__(self):
-        # Setting fixed discount rates for loyalty and bulk purchases
-        self.loyalty_discount = 0.1  # 10% discount for loyalty members
-        self.bulk_discount = 0.2     # 20% discount for bulk purchases (quantity >= 5)
+        # Set discount rates for loyalty members and bulk purchases
+        self.loyalty_discount = 0.1  # Loyalty member discount (10%)
+        self.bulk_discount = 0.2     # Bulk purchase discount (20% if 5 or more items)
 
     def apply_discount(self, subtotal, is_loyalty_member, bulk_quantity):
-        # Calculates total discount based on membership and quantity
-        discount = 0
+        # Calculate total discount based on loyalty status and bulk quantity
+        discount = 0  # Start with no discount
         if is_loyalty_member:
-            discount += subtotal * self.loyalty_discount  # Apply loyalty discount
+            # Apply loyalty discount if customer is a member
+            discount += subtotal * self.loyalty_discount
         if bulk_quantity >= 5:
-            discount += subtotal * self.bulk_discount  # Apply bulk discount if quantity threshold is met
-        return discount  # Return calculated discount amount
+            # Apply bulk discount if cart has 5 or more items
+            discount += subtotal * self.bulk_discount
+        return discount  # Return the total calculated discount
 
 
 # === Order Processing ===
 class Order:
-    """Handles an order with customer details, cart items, and applies discounts."""
+    """Processes an order with customer details, applies discounts, calculates taxes, and generates an invoice."""
 
     def __init__(self, customer, shopping_cart):
-        # Composes Order with customer and shopping cart details
-        self.customer = customer  # Customer instance
-        self.shopping_cart = shopping_cart  # ShoppingCart instance with all items
-        self.order_date = datetime.now()  # Order timestamp
-        self.discount = Discount()  # Discount instance for applying discounts
-        self.vat_rate = 0.08  # VAT rate (8%)
+        # Initialize the order with customer and shopping cart instances
+        self.customer = customer  # Customer who placed the order
+        self.shopping_cart = shopping_cart  # ShoppingCart instance containing the ordered items
+        self.order_date = datetime.now()  # Record the date and time of order creation
+        self.discount = Discount()  # Discount instance to manage discount calculations
+        self.vat_rate = 0.08  # VAT rate (8%) applied on the discounted subtotal
 
     def calculate_total(self):
-        # Calculates the total order cost, including discounts and VAT
+        # Calculate subtotal, discount, VAT, and final total for the order
+        # Subtotal is the sum of all items' (price * quantity) in the cart
         subtotal = sum(ebook.price * quantity for ebook, quantity in self.shopping_cart.items.items())
+        # Calculate applicable discount based on customer's loyalty status and item quantity
         discount = self.discount.apply_discount(subtotal, self.customer.loyalty_member, len(self.shopping_cart.items))
-        vat = (subtotal - discount) * self.vat_rate  # Calculate VAT on the discounted subtotal
-        total = subtotal - discount + vat  # Final total after applying discount and VAT
-        return subtotal, discount, vat, total
+        # Calculate VAT based on the subtotal after discount
+        vat = (subtotal - discount) * self.vat_rate
+        # Final total is subtotal after discounts plus VAT
+        total = subtotal - discount + vat
+        return subtotal, discount, vat, total  # Return all calculated values for invoice
 
     def generate_invoice(self):
-        # Generates and returns a formatted invoice with all details
+        # Generates a formatted invoice including customer details, itemized purchases, and cost breakdown
+        # Calculate subtotal, discount, VAT, and total for display in the invoice
         subtotal, discount, vat, total = self.calculate_total()
+        # Start the invoice with customer name and itemized list
         invoice = f"=== Invoice ===\nCustomer Name: {self.customer.name}\n"
         for ebook, quantity in self.shopping_cart.items.items():
+            # List each ebook in the cart with quantity and cost
             invoice += f" - {ebook.title} (x{quantity}): ${ebook.price * quantity:.2f}\n"
-        invoice += f"Subtotal after discounts: ${subtotal - discount:.2f}\nVAT ({self.vat_rate * 100}%): ${vat:.2f}\nTotal with VAT: ${total:.2f}\n"
-        return invoice
+        # Append the subtotal, discount, VAT, and final total to the invoice
+        invoice += f"Subtotal after discounts: ${subtotal - discount:.2f}\n"
+        invoice += f"VAT ({self.vat_rate * 100}%): ${vat:.2f}\n"
+        invoice += f"Total with VAT: ${total:.2f}\n"
+        return invoice  # Return the completed invoice text
